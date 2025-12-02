@@ -1,0 +1,451 @@
+% ======================================================================
+%   Document class
+%   Compile with: lualatex or xelatex
+% ======================================================================
+\documentclass[10pt,a4paper]{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+
+
+% Main document language (uncomment one of these):
+\usepackage[spanish]{babel}
+% \usepackage[english]{babel}
+
+% --- Define reusable metadata macros ---
+\newcommand{\DocTitle}{Modelado de Crisis de Liquidez Sistémica en Mercados de Opciones mediante Modelos Basados en Agentes}
+\newcommand{\DocAuthor}{Heriberto Espino Montelongo}
+\newcommand{\DocKeywords}{Modelos Basados en Agentes, Crisis de Liquidez, Mercados de Opciones, Dinámicas de Mercado, Simulación Financiera}
+% Connect to standard LaTeX title/author
+\title{\DocTitle}
+\author{\DocAuthor}
+
+
+% ======================================================================
+%   Page layout & hyperlinks
+% ======================================================================
+\usepackage[margin=4cm]{geometry} % Page margins
+\usepackage[hidelinks]{hyperref}  % Clickable links without colored boxes
+% --- Hyperref metadata using the same macros ---
+\hypersetup{
+  pdfauthor={\DocAuthor},
+  pdftitle={\DocTitle},
+  pdfkeywords={\DocKeywords}
+}
+
+% ======================================================================
+%   Mathematics and symbols
+% ======================================================================
+\usepackage{amsmath,amssymb}      % Standard AMS math packages
+
+% ======================================================================
+%   Lists (itemize, enumerate) and paragraph layout
+% ======================================================================
+\usepackage{enumitem}
+\setlist{nosep}                    % Remove extra vertical space in lists
+\setlist[itemize]{label=--}        % Itemize uses en dash as bullet
+
+% Global paragraph style: no indentation, add vertical space between paragraphs
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+
+% ======================================================================
+%   Fonts: text + math
+%   Requires LuaLaTeX or XeLaTeX
+% ======================================================================
+\usepackage{fontspec}              % Font selection for Unicode engines
+
+% Main text font: EB Garamond
+\setmainfont{EB Garamond}[
+  UprightFont   = * Regular,
+  ItalicFont    = * Italic,
+  BoldFont      = * SemiBold,
+  BoldItalicFont= * SemiBold Italic
+]
+
+% Math font: newtxmath (Times-like math)
+\usepackage{newtxmath}
+
+% Replace \mathbb with Libertinus Math blackboard bold
+%   bb=libus  -> use Libertinus blackboard-bold
+%   bbscaled  -> overall scaling factor
+\usepackage[bb=libus,bbscaled=1.0]{mathalpha}
+
+
+
+% ======================================================================
+%   Header and footer (fancyhdr)
+% ======================================================================
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}                          % Clear all header and footer fields
+
+
+\fancyhead[L]{\small\textsc{Dinamicas de Crisis en Mercados de Opcionoes}} % Left header
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+
+
+
+% ======================================================================
+%   Section and subsection formatting
+% ======================================================================
+\usepackage{titlesec}
+\usepackage{etoolbox} % for \pretocmd
+
+
+% Optional explicit bold faces for headings (not strictly necessary)
+\newfontface\garamondbold{EB Garamond SemiBold}
+\newfontface\garamondbolditalic{EB Garamond SemiBold Italic}
+
+% Section title format (bigger, without \clearpage here)
+\titleformat{\section}
+  {\garamondbold\LARGE} % large, Large, LARGE, HUGE
+  {\thesection}
+  {12pt}
+  {}
+
+% Make each \section start on a new page and have an empty pagestyle there
+% Section page: new page + custom pagestyle (only page number)
+
+
+
+% Code before the title text
+
+% --- Special pagestyle for section-opening pages: only page number at bottom ---
+
+
+% ======================================================================
+%   Section title pages to clearpage with new section
+% ======================================================================
+
+
+% \fancypagestyle{sectionpage}{%
+%   \fancyhf{}%
+%   \fancyhead[R]{\small\thepage}
+%   \renewcommand{\headrulewidth}{0pt}%
+% }
+% \pretocmd{\section}{\clearpage\thispagestyle{sectionpage}\vspace*{-90pt}}{}{}
+
+
+% \fancypagestyle{sectionpage}{%
+%   \fancyhf{}%
+%   \fancyfoot[C]{\small\thepage}%
+%   \renewcommand{\headrulewidth}{0pt}%
+%   \renewcommand{\footrulewidth}{0pt}%
+% }
+% \pretocmd{\section}{\clearpage\thispagestyle{sectionpage}}{}{}
+
+\fancypagestyle{firstpagee}{%
+  \fancyhf{}%
+  \fancyhead[R]{\small\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+}
+  
+
+
+% Subsection title format
+\titleformat{\subsection}
+  {\bfseries\large}
+  {\thesubsection}
+  {8pt}
+  {}
+
+% --- Make the "Table of contents" title huge and % ======================================================================
+%   Miscellaneous useful packages
+% ======================================================================
+\usepackage{tocloft}                % Customize table of contents
+\usepackage{xcolor}
+\usepackage{booktabs}
+
+% --- Make the "Table of contents" title huge and nicely styled ---
+\renewcommand{\cfttoctitlefont}{%
+  \centering
+  \garamondbold\LARGE   % or \fontsize{28}{32}\selectfont if you want even larger
+}
+\renewcommand{\cftaftertoctitle}{\par\vspace{1.5em}} % space below the title
+
+
+
+
+% ======================================================================
+%   Line spacing
+% ======================================================================
+\usepackage{setspace}
+\onehalfspacing                     % 1.5 line spacing
+
+% ======================================================================
+%   Miscellaneous useful packages
+% ======================================================================
+\usepackage{tocloft}                % Customize table of contents
+\usepackage{xcolor}                 % Colors (for code, emphasis, etc.)
+\usepackage{booktabs}               % Professional-looking tables
+
+% ======================================================================
+%   Source code formatting
+% ======================================================================
+\usepackage{listings}
+
+% Basic listings configuration
+\lstset{
+  basicstyle      = \ttfamily\small,     % Monospaced, small size
+  backgroundcolor = \color{gray!10},     % Light gray background
+  frame           = single,              % Single-line frame around code
+  breaklines      = true,                % Wrap long lines
+  tabsize         = 2,                   % Optional: tab width
+  numbers         = none                 % Optional: omit line numbers
+}
+
+% ======================================================================
+%   Document body
+% ======================================================================
+% Full-width abstract (no extra margins)
+\usepackage{ragged2e} % for \justifying
+
+% Full-width, justified abstract environment
+\newenvironment{wideabstract}{%
+  \par\vspace{1em}%
+  \noindent\textbf{Resumen}\par
+  \vspace{0.2em}%
+  \justifying         % <-- full justification, overrides \centering
+}{%
+  \par\vspace{1em}%
+}
+
+
+% =============================
+% Cover-page "function"
+% =============================
+% Argument #1: abstract text
+\newcommand{\MakeCoverPage}[1]{%
+  \begin{titlepage}
+
+    \vspace*{-85pt}
+    {\Huge\bfseries \DocTitle\par}
+    \vspace{2cm}
+    
+    \centering
+
+    {\Large Universidad de las Américas Puebla
+    \\Departamento de Actuaría, Física y Matemáticas
+    \par}
+    \vspace{1cm}
+    {\Large O25 LDS1061 1: Temas selectos 1
+    \par}
+    \vfill
+        % --- Abstract ---
+    \begin{wideabstract}
+      #1%
+    \end{wideabstract}
+        {\bfseries Palabras clave:} \DocKeywords
+    \vspace{0.5cm}
+
+
+
+
+    {\ \today\par}
+  \end{titlepage}
+}
+
+
+\begin{document}
+% =============================
+%   Cover page
+% ============================= 
+\MakeCoverPage{%
+    Este trabajo presenta un modelo basado en agentes (ABM) para simular y analizar crisis de liquidez sistémica en mercados de opciones. Se describen los tipos de agentes, sus comportamientos e interacciones, así como los parámetros clave del modelo. Los resultados muestran dinámicas emergentes como cascadas de liquidación, amplificación de volatilidad y fragmentación de la red durante crisis simuladas. Se discuten las limitaciones del modelo y se proponen extensiones futuras para mejorar su realismo y aplicabilidad en estudios financieros.
+}
+
+% =============================
+%   Table of contents
+% =============================
+
+\vspace*{-60pt} 
+\tableofcontents
+%set counter in roman numerals
+
+\pagenumbering{roman}
+\thispagestyle{firstpagee} % No header/footer on ToC page
+\clearpage
+
+%number page 1
+\setcounter{page}{1}
+\pagenumbering{arabic}
+\vspace*{-85pt}
+\section{Introducción}
+\thispagestyle{firstpagee}
+
+Las crisis financieras modernas se caracterizan por su rápida propagación a través de redes de instituciones interconectadas, generando efectos en cascada difíciles de predecir mediante modelos analíticos tradicionales. El mercado de opciones, donde convergen múltiples tipos de agentes con estrategias heterogéneas, representa un ecosistema particularmente susceptible a crisis de liquidez sistémicas.
+
+Los mercados de opciones exhiben comportamientos emergentes complejos que surgen de las interacciones entre \textit{market makers}, especuladores, \textit{hedgers} institucionales y traders apalancados. Durante períodos de estrés, estas interacciones pueden amplificar choques iniciales a través de mecanismos de retroalimentación como \textit{margin calls} en cascada, ampliación de \textit{spreads} bid-ask y retiro súbito de liquidez.
+
+La modelación mediante Modelos Basados en Agentes (ABM) es ideal para este fenómeno por tres razones fundamentales: (1) permite capturar la heterogeneidad de comportamientos entre participantes del mercado, (2) facilita el estudio de dinámicas de contagio y efectos de red sin asumir equilibrio, y (3) posibilita el análisis de fenómenos emergentes que no pueden derivarse analíticamente de las reglas individuales. Este enfoque bottom-up es especialmente relevante para sistemas donde la agregación simple de comportamientos individuales no captura la complejidad del sistema completo.
+
+\section{Descripción del Modelo}
+
+\subsection{Agentes y Entorno}
+
+El modelo implementa cuatro tipos de agentes que operan en un mercado de opciones call at-the-money sobre un activo subyacente:
+
+\begin{enumerate}
+    \item \textbf{Market Makers} ($N=7$): Proveedores de liquidez que mantienen inventarios de opciones y ajustan sus \textit{spreads} según riesgo e inventario.
+    \item \textbf{Especuladores} ($N=40$): Traders que siguen estrategias técnicas de \textit{momentum} o reversión a la media.
+    \item \textbf{Hedgers} ($N=15$): Instituciones que buscan cobertura delta-neutral para portafolios de acciones.
+    \item \textbf{Traders Apalancados} ($N=25$): Agentes que operan con \textit{leverage} y están sujetos a \textit{margin calls}.
+\end{enumerate}
+
+El entorno consiste en un mercado centralizado donde el precio del activo subyacente evoluciona mediante un Movimiento Browniano Geométrico (GBM):
+\begin{equation}
+    dS = \mu S dt + \sigma S dW
+\end{equation}
+donde $S$ es el precio, $\mu=0$ (drift neutral), $\sigma=0.20$ (volatilidad inicial) y $dW$ es un proceso de Wiener.
+
+\subsection{Propiedades de los Agentes}
+
+Cada tipo de agente posee propiedades específicas que determinan su comportamiento:
+
+\textbf{Market Makers:}
+\begin{itemize}
+    \item Capital inicial: \$100k - \$500k
+    \item \textit{Spread} base: 0.5\% - 2.0\%
+    \item Aversión al riesgo: 0.5 - 2.0
+    \item Inventario máximo: 50 contratos
+\end{itemize}
+
+\textbf{Especuladores:}
+\begin{itemize}
+    \item Capital inicial: \$10k - \$100k
+    \item Estrategia: \textit{momentum} o reversión a la media
+    \item Umbral de señal: 1\% - 3\%
+    \item Posición máxima: proporcional al capital
+\end{itemize}
+
+\textbf{Hedgers:}
+\begin{itemize}
+    \item Valor del portafolio: \$500k - \$2M
+    \item Ratio de cobertura: 30\% - 70\%
+    \item Frecuencia de rebalanceo: 5 - 15 pasos
+\end{itemize}
+
+\textbf{Traders Apalancados:}
+\begin{itemize}
+    \item Capital propio: \$5k - \$50k
+    \item \textit{Leverage}: 2x - 5x
+    \item Requerimiento de margen: 25\% - 40\%
+\end{itemize}
+
+\subsection{Reglas de Comportamiento e Interacción}
+
+\textbf{Market Makers} ajustan sus \textit{spreads} dinámicamente según:
+\begin{equation}
+    \text{Spread}_t = \text{Spread}_{\text{base}} \times \left(1 + \frac{|\text{Inventario}|}{I_{\max}}\right) \times \left(1 + \alpha \frac{\sigma_t}{\sigma_0}\right)
+\end{equation}
+donde $\alpha$ es la aversión al riesgo. Durante crisis, el \textit{spread} se duplica.
+
+\textbf{Especuladores} generan señales basadas en retornos del subyacente:
+\begin{equation}
+    r_t = \frac{S_t}{S_{t-1}} - 1
+\end{equation}
+Operan cuando $|r_t| > \text{umbral}$, siguiendo estrategias de \textit{momentum} (comprar si $r_t > 0$) o reversión (vender si $r_t > 0$).
+
+\textbf{Hedgers} rebalancean periódicamente para mantener:
+\begin{equation}
+    N_{\text{opciones}} = \frac{V_{\text{portafolio}} \times h}{P_{\text{opción}}}
+\end{equation}
+donde $h$ es el ratio de cobertura. Durante crisis, incrementan $h$ hasta 90\%.
+
+\textbf{Traders Apalancados} enfrentan \textit{margin calls} cuando:
+\begin{equation}
+    \text{Capital}_{\text{neto}} < |\text{Posición}| \times P_{\text{opción}} \times m
+\end{equation}
+donde $m$ es el requerimiento de margen. La liquidación forzada genera pérdidas del 10\% e impacta el mercado.
+
+\subsection{Parámetros del Modelo}
+
+\begin{table}[H]
+\centering
+\caption{Parámetros principales del modelo}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Parámetro} & \textbf{Valor Base} & \textbf{Rango} \\
+\midrule
+Precio inicial subyacente & \$100 & - \\
+Volatilidad inicial & 20\% & 5\% - 50\% \\
+Paso del shock & 50 & 10 - 150 \\
+Magnitud del shock & -10\% & -30\% a +30\% \\
+Tiempo hasta vencimiento & 30 días & - \\
+Tasa libre de riesgo & 2\% & - \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El precio de la opción se calcula mediante Black-Scholes:
+\begin{equation}
+    C = S\Phi(d_1) - Ke^{-rT}\Phi(d_2)
+\end{equation}
+
+\section{Resultados}
+
+\subsection{Comportamientos Emergentes}
+
+Las simulaciones revelan tres comportamientos emergentes críticos:
+
+\textbf{1. Cascadas de Liquidación:} Tras el shock en $t=50$, se observa un efecto dominó donde los primeros \textit{margin calls} disparan liquidaciones adicionales. El modelo muestra que aproximadamente el 70\% de los traders apalancados son liquidados en las primeras 15 iteraciones post-shock, creando presión vendedora que retroalimenta la crisis.
+
+\textbf{2. Amplificación No-Lineal de Volatilidad:} La volatilidad implícita aumenta de manera súbita y desproporcionada al shock inicial. Un shock de precio de -10\% genera incrementos de volatilidad de hasta 80\% debido a la interacción entre retiro de liquidez de \textit{market makers} y pánico de especuladores.
+
+\textbf{3. Fragmentación de la Red:} El análisis de topología de red muestra que la estructura inicialmente conectada se fragmenta durante la crisis, con \textit{market makers} aislándose para proteger capital y \textit{hedgers} incrementando actividad de rebalanceo, generando subgrafos desconectados que amplifican la illiquidez.
+
+\subsection{Efecto de Parámetros}
+
+\textbf{Magnitud del Shock:} La proporción de agentes liquidados crece exponencialmente con la magnitud del shock. Shocks menores a -5\% son absorbidos sin crisis sistémica, mientras que shocks superiores a -15\% causan colapso casi total del mercado.
+
+\textbf{Apalancamiento:} Simulaciones con \textit{leverage} promedio de 2x muestran 40\% de liquidaciones, mientras que \textit{leverage} de 5x resulta en 95\% de liquidaciones. La relación es altamente no-lineal, con punto crítico en 3.5x.
+
+\textbf{Número de Market Makers:} Más \textit{market makers} (N$>$10) mejoran resiliencia del sistema reduciendo \textit{spreads} promedio en 30\% y disminuyendo tiempo de recuperación post-crisis en 40\%.
+
+\subsection{Métricas de Contagio Sistémico}
+
+El índice de contagio sistémico (proporción de agentes estresados) permanece bajo 0.2 durante operación normal pero se dispara a 0.9 inmediatamente después del shock, manteniéndose elevado por 30+ pasos. La fragilidad de red (varianza del estrés) muestra comportamiento similar, indicando sincronización de estados de agentes durante crisis.
+
+\section{Limitaciones del Modelo}
+
+\begin{enumerate}
+    \item \textbf{Simplificación del \textit{order book}:} El modelo usa un \textit{order book} agregado sin profundidad completa ni dinámica de órdenes límite.
+    
+    \item \textbf{Estrategias de agentes:} Las estrategias son estilizadas y no capturan la complejidad de algoritmos reales de trading.
+    
+    \item \textbf{Ausencia de reguladores:} No se modelan intervenciones de autoridades (circuit breakers, inyecciones de liquidez).
+    
+    \item \textbf{Mercado aislado:} No considera spillovers con otros mercados o clases de activos.
+    
+    \item \textbf{Racionalidad perfecta en decisiones:} Agentes no exhiben sesgos psicológicos documentados en finanzas conductuales.
+\end{enumerate}
+
+\section{Extensiones Futuras}
+
+\begin{enumerate}
+    \item \textbf{Múltiples activos subyacentes:} Modelar correlaciones y contagio cross-asset.
+    
+    \item \textbf{Aprendizaje adaptativo:} Implementar agentes que ajusten estrategias mediante reinforcement learning.
+    
+    \item \textbf{Heterogeneidad temporal:} Permitir que parámetros de agentes evolucionen según experiencias pasadas.
+    
+    \item \textbf{Intervenciones de política:} Simular efectos de regulaciones como límites a \textit{leverage} o requisitos de capital contracíclicos.
+    
+    \item \textbf{Calibración empírica:} Ajustar parámetros usando datos históricos de crisis reales (2008, 2020) mediante técnicas de optimización.
+    
+    \item \textbf{Análisis de sensibilidad exhaustivo:} Explorar espacio paramétrico completo mediante técnicas de Monte Carlo y análisis de Sobol.
+\end{enumerate}
+
+\vspace{0.5cm}
+\noindent El modelo demuestra que los ABM son herramientas poderosas para estudiar fenómenos financieros complejos donde las interacciones microscópicas generan dinámicas macroscópicas no triviales. Los resultados sugieren que la arquitectura del mercado y los límites al apalancamiento son factores críticos para la estabilidad sistémica.
+
+\end{document}
