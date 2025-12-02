@@ -26,6 +26,7 @@
 \title{\DocTitle}
 \author{\DocAuthor}
 
+\graphicspath{{../figuras/}}
 
 % ======================================================================
 %   Page layout & hyperlinks
@@ -744,7 +745,7 @@ En la parte inferior del panel se muestran los parámetros de la corrida: númer
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.45\textwidth]{figuras/estado actual.png}
+    \includegraphics[width=0.45\textwidth]{estado actual.png}
     \caption{Panel de estado del modelo en $t=41$. Se muestra el régimen de mercado (CRISIS), el precio del subyacente, la volatilidad implícita y el número acumulado de \emph{margin calls}, junto con los deslizadores de parámetros.}
     \label{fig:status-panel}
 \end{figure}
@@ -771,7 +772,7 @@ En este escenario se observa una estructura claramente fragmentada: dos grandes 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{figuras/network.png}
+    \includegraphics[width=0.8\textwidth]{network.png}
     \caption{Topología de la red de agentes en $t=41$. Colores: verde (sano), naranja (estresado), rojo (crítico) y negro (liquidado). La fragmentación en dos clústeres grandes y algunos nodos aislados es indicio de ruptura de la conectividad del mercado.}
     \label{fig:network}
 \end{figure}
@@ -799,7 +800,7 @@ En resumen, el espacio de fases deja ver que la crisis no es sólo una caída de
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{figuras/phase space analysis.png}
+    \includegraphics[width=0.8\textwidth]{phase space analysis.png}
     \caption{Trayectoria del sistema en el espacio de fases (precio subyacente vs volatilidad implícita). El shock desplaza al sistema bruscamente a una región de menor precio y mayor volatilidad, seguida de oscilaciones en torno a este nuevo régimen.}
     \label{fig:phase-space}
 \end{figure}
@@ -834,7 +835,7 @@ El mensaje central de la figura es que la crisis es disparada y amplificada prin
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{figuras/liquidation cascades.png}
+    \includegraphics[width=0.85\textwidth]{liquidation cascades.png}
     \caption{Dinámica de cascadas de liquidación y evolución del estrés promedio por tipo de agente. Se observan saltos discretos en las liquidaciones acumuladas, característicos de \emph{margin calls} en cadena, y niveles de estrés persistentemente elevados en los traders apalancados.}
     \label{fig:cascades}
 \end{figure}
@@ -868,7 +869,7 @@ Esta figura confirma que el impacto de la crisis es muy desigual: los grandes ju
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{figuras/statistical distributions.png}
+    \includegraphics[width=0.85\textwidth]{statistical distributions.png}
     \caption{Distribución de salud de los agentes (arriba) y capital promedio por tipo (abajo) en el estado final analizado. La crisis castiga desproporcionadamente a los agentes apalancados, mientras que los hedgers conservan un nivel de capital elevado.}
     \label{fig:distributions}
 \end{figure}
@@ -899,7 +900,7 @@ En el panel inferior se muestra el espectro de potencias (FFT) de la serie de vo
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{figuras/spectral analysis.png}
+    \includegraphics[width=0.85\textwidth]{spectral analysis.png}
     \caption{Serie temporal de volatilidad implícita (arriba) y análisis espectral mediante FFT (abajo). La crisis desplaza la serie a un nivel estructuralmente más alto y concentra la energía en frecuencias bajas.}
     \label{fig:spectral}
 \end{figure}
@@ -933,7 +934,7 @@ En la simulación de ejemplo se observan valores de $F_t$ que se disparan numér
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{figuras/contagion n systimic risk.png}
+    \includegraphics[width=0.85\textwidth]{contagion n systimic risk.png}
     \caption{Índice de contagio sistémico (arriba) y medida de fragilidad de red (abajo). La crisis se traduce en un aumento súbito de la dispersión de estrés, reflejando la coexistencia de agentes muy dañados y agentes relativamente ilesos.}
     \label{fig:contagion}
 \end{figure}

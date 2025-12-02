@@ -1,0 +1,544 @@
+%=================================================================
+% Presentación Beamer: Crisis de Liquidez en un Mercado de Opciones
+%=================================================================
+\documentclass[11pt, aspectratio=169]{beamer}
+
+%--------------------------------------------------
+% Idioma y fuentes básicas
+%--------------------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{booktabs}
+
+\graphicspath{{../figuras/}}
+
+%--------------------------------------------------
+% Tema Beamer (puedes cambiarlo a Madrid, Berlin, etc.)
+%--------------------------------------------------
+\usepackage{fontspec}
+\setmainfont{EB Garamond}[
+  UprightFont = * Regular,
+  ItalicFont = * Italic,
+  BoldFont = * SemiBold,
+  BoldItalicFont = * SemiBold Italic,
+]
+\setsansfont{EB Garamond}[
+  UprightFont = * Regular,
+  ItalicFont = * Italic,
+  BoldFont = * SemiBold,
+  BoldItalicFont = * SemiBold Italic,
+]
+\usetheme{metropolis}
+\usecolortheme{default}
+\definecolor{primarycolor}{HTML}{0b0a40}
+\setbeamercolor{title}{fg=primarycolor}
+
+\setbeamercolor{structure}{fg=blue!70!black}
+\setbeamercolor{palette primary}{bg=primarycolor,fg=white} 
+\setbeamercolor{palette secondary}{bg=blue!60!black,fg=white}
+\setbeamercolor{palette tertiary}{bg=blue!50!black,fg=white}
+\setbeamercolor{background canvas}{bg=white}
+
+
+\usecolortheme{default}
+
+% Quitar símbolos de navegación
+\setbeamertemplate{navigation symbols}{}
+
+% Pie de página sencillo con título abreviado
+\setbeamertemplate{footline}{
+  \leavevmode%
+  \hbox{
+    \begin{beamercolorbox}[wd=.7\paperwidth,ht=2.5ex,dp=1ex,leftskip=1em]{author in head/foot}
+      \usebeamerfont{author in head/foot}\insertshorttitle
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.3\paperwidth,ht=2.5ex,dp=1ex,rightskip=1em]{date in head/foot}
+      \usebeamerfont{date in head/foot}\insertframenumber{} / \inserttotalframenumber
+    \end{beamercolorbox}
+  }%
+}
+
+%--------------------------------------------------
+% Datos de la portada
+%--------------------------------------------------
+\title[ABM Opciones y Liquidez]{Crisis de Liquidez en un Mercado de Opciones: \\ Un Modelo Basado en Agentes}
+\author[H.\ Espino Montelongo]{Los $\pi$ mosqueteros}
+\institute[UDLAP]{Universidad de las Américas Puebla}
+\date{\today}
+
+%--------------------------------------------------
+% Mostrar una diapositiva al inicio de cada sección
+%--------------------------------------------------
+\AtBeginSection[]
+{
+  \begin{frame}
+    \centering
+    \vfill
+    \begin{beamercolorbox}[sep=10pt,center,rounded=true,shadow=true]{title}
+      \usebeamerfont{title}\insertsectionhead\par
+    \end{beamercolorbox}
+    \vfill
+  \end{frame}
+}
+
+%=================================================================
+\begin{document}
+%=================================================================
+
+%--------------------------------------------------
+\begin{frame}
+  \titlepage
+\end{frame}
+
+%--------------------------------------------------
+\begin{frame}{Contenido}
+  \tableofcontents
+\end{frame}
+
+%=================================================================
+\section{Motivación y objetivos}
+%=================================================================
+
+%--------------------------------------------------
+\begin{frame}{Motivación}
+  \begin{itemize}
+    \item Los mercados de opciones son clave para:
+      \begin{itemize}
+        \item Cobertura de riesgos
+        \item Especulación
+        \item Formación de precios
+      \end{itemize}
+    \item En episodios de estrés pueden aparecer:
+      \begin{itemize}
+        \item Ventas forzadas y \emph{margin calls} en cadena
+        \item Ampliación brusca de \emph{spreads}
+        \item Desaparición temporal de liquidez
+      \end{itemize}
+    \item Estos fenómenos dependen de:
+      \begin{itemize}
+        \item Apalancamiento
+        \item Reglas de margen
+        \item Estructura de red entre participantes
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+%--------------------------------------------------
+\begin{frame}{¿Por qué usar modelos basados en agentes (ABM)?}
+  \begin{itemize}
+    \item Modelos clásicos: suelen asumir un agente representativo y mercados líquidos.
+    \item Pero en crisis importa:
+      \begin{itemize}
+        \item Quién está apalancado
+        \item Quién provee liquidez
+        \item Cómo se conectan los balances
+      \end{itemize}
+    \item Un ABM permite:
+      \begin{itemize}
+        \item Representar tipos de agentes con reglas distintas
+        \item Observar cómo surgen cascadas y contagio \emph{desde abajo}
+        \item Probar “qué pasaría si…” cambiamos márgenes, apalancamiento, etc.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+%--------------------------------------------------
+\begin{frame}{Objetivo de la presentación}
+  \begin{itemize}
+    \item Mostrar un modelo sencillo de mercado de opciones basado en agentes.
+    \item Enseñar, con ejemplos visuales, cómo:
+      \begin{itemize}
+        \item Un shock de precio puede generar una crisis de liquidez.
+        \item Los traders apalancados amplifican el choque.
+        \item La red de agentes se fragmenta en plena crisis.
+      \end{itemize}
+    \item Discutir qué nos dice el modelo sobre:
+      \begin{itemize}
+        \item Límites de apalancamiento
+        \item Políticas de margen
+        \item Medición de riesgo sistémico
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+%=================================================================
+\section{Descripción intuitiva del modelo}
+%=================================================================
+
+%--------------------------------------------------
+\begin{frame}{Mapa general del modelo}
+  \begin{block}{Mercado simulado}
+    \begin{itemize}
+      \item Un solo activo subyacente $S_t$ (precio de una acción).
+      \item Opciones call europeas at-the-money sobre ese activo.
+      \item Tiempo discreto: un “día” por paso de simulación.
+    \end{itemize}
+  \end{block}
+  \begin{block}{Qué se simula en cada día}
+    \begin{enumerate}
+      \item Movimiento del precio del subyacente (con posibilidad de shock).
+      \item Recalcular precio de la opción y volatilidad implícita.
+      \item Decisiones de los agentes y ejecuciones en el mercado.
+      \item Actualizar capital, estrés y posibles \emph{margin calls}.
+    \end{enumerate}
+  \end{block}
+\end{frame}
+
+%--------------------------------------------------
+\begin{frame}{Tipos de agentes}
+  \begin{columns}
+    \column{0.48\textwidth}
+    \textbf{Market Makers}
+    \begin{itemize}
+      \item Proveen cotizaciones bid/ask.
+      \item Gestionan inventarios de opciones.
+      \item A más volatilidad o inventario, más ancho el \emph{spread}.
+    \end{itemize}
+    \vspace{0.3cm}
+    \textbf{Especuladores}
+    \begin{itemize}
+      \item Reglas simples de:
+        \begin{itemize}
+          \item \emph{Momentum}: seguir la tendencia.
+          \item Reversión: apostar a que el precio vuelve.
+        \end{itemize}
+      \item Operan si el movimiento del día supera cierto umbral.
+    \end{itemize}
+    \column{0.48\textwidth}
+    \textbf{Hedgers}
+    \begin{itemize}
+      \item Tienen un portafolio grande de acciones.
+      \item Usan opciones para cubrir una fracción del portafolio.
+      \item En crisis aumentan su nivel de cobertura.
+    \end{itemize}
+    \vspace{0.3cm}
+    \textbf{Traders apalancados}
+    \begin{itemize}
+      \item Capital propio pequeño, exposición grande.
+      \item Sujetos a reglas de margen.
+      \item Si el capital cae demasiado, sufren \emph{margin calls} y liquidaciones.
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+%--------------------------------------------------
+\begin{frame}{Dinámica del precio y del mercado}
+  \begin{itemize}
+    \item El precio del subyacente se mueve como un proceso aleatorio “suave”.
+    \item En un día específico se introduce un shock (por ejemplo, \textbf{-10\%}).
+    \item A partir de ahí:
+      \begin{itemize}
+        \item El precio de la opción cae.
+        \item La volatilidad implícita sube (el mercado exige mayor prima de riesgo).
+      \end{itemize}
+    \item El modelo marca el régimen “CRISIS” cuando:
+      \begin{itemize}
+        \item Ocurre el shock, o
+        \item Se acumulan suficientes \emph{margin calls}.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+%--------------------------------------------------
+\begin{frame}{Reglas clave de comportamiento}
+  \begin{block}{Market Makers}
+    \begin{itemize}
+      \item Si tienen demasiado inventario o la volatilidad sube:
+        \begin{itemize}
+          \item Ensanchan sus \emph{spreads} para protegerse.
+          \item En crisis, el \emph{spread} se puede duplicar.
+        \end{itemize}
+    \end{itemize}
+  \end{block}
+  \begin{block}{Especuladores}
+    \begin{itemize}
+      \item Se activan sólo si el movimiento del día supera su umbral.
+      \item \emph{Momentum}: compran cuando el precio ya subió.
+      \item Reversión: venden cuando el precio subió demasiado.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+%--------------------------------------------------
+\begin{frame}{Reglas clave de comportamiento (II)}
+  \begin{block}{Hedgers}
+    \begin{itemize}
+      \item Cada cierto número de días ajustan su cobertura.
+      \item En crisis:
+        \begin{itemize}
+          \item Aumentan el porcentaje cubierto.
+          \item Generan demanda adicional de opciones justo cuando hay menos liquidez.
+        \end{itemize}
+    \end{itemize}
+  \end{block}
+  \begin{block}{Traders apalancados}
+    \begin{itemize}
+      \item Comparan su capital con el valor de la posición.
+      \item Si el colchón de capital es demasiado pequeño:
+        \begin{itemize}
+          \item Sufren una \emph{margin call}.
+          \item El modelo los liquida y registra una nueva liquidación.
+        \end{itemize}
+      \item Varias de estas liquidaciones en cadena es lo que llamamos “cascada”.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+%--------------------------------------------------
+\begin{frame}{Escenario base}
+  \begin{itemize}
+    \item Un shock de precio moderado (por ejemplo, -10\%) en el paso 50.
+    \item Población típica:
+      \begin{itemize}
+        \item 7 market makers
+        \item 40 especuladores
+        \item 15 hedgers
+        \item 25 traders apalancados
+      \end{itemize}
+    \item Volatilidad inicial: 20\%.
+    \item Plazo de la opción: 30 días (se va reduciendo con el tiempo).
+    \item Variamos:
+      \begin{itemize}
+        \item Nivel de apalancamiento promedio.
+        \item Cantidad de market makers.
+        \item Momento y magnitud del shock.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+%=================================================================
+\section{Resultados visuales}
+%=================================================================
+
+%--------------------------------------------------
+\begin{frame}{Panel de estado del mercado}
+  \begin{columns}
+    \column{0.5\textwidth}
+      \begin{itemize}
+        \item En el ejemplo mostrado:
+          \begin{itemize}
+            \item \textbf{Estado}: CRISIS
+            \item Precio subyacente $\approx\$91$ (desde \$100)
+            \item Volatilidad implícita $\approx 23\%$ (desde 20\%)
+            \item 22 \emph{margin calls} acumuladas
+          \end{itemize}
+        \item Con los deslizadores podemos:
+          \begin{itemize}
+            \item Cambiar el número de agentes de cada tipo.
+            \item Mover el paso del shock.
+            \item Ajustar la magnitud del shock.
+          \end{itemize}
+      \end{itemize}
+    \column{0.5\textwidth}
+      % Reemplaza el nombre de archivo
+      \includegraphics[width=0.6\linewidth]{estado actual.png}
+  \end{columns}
+\end{frame}
+
+%--------------------------------------------------
+\begin{frame}{Red de agentes y contagio}
+  \begin{columns}
+    \column{0.55\textwidth}
+      \includegraphics[width=\linewidth]{network.png}
+    \column{0.45\textwidth}
+      \begin{itemize}
+        \item Cada punto es un agente.
+        \item El color indica su “salud”:
+          \begin{itemize}
+            \item Verde: sano
+            \item Naranja: estresado
+            \item Negro: liquidado
+          \end{itemize}
+        \item En el ejemplo:
+          \begin{itemize}
+            \item La red se rompe en dos grandes grupos.
+            \item Varios nodos negros se concentran en un clúster.
+            \item Esto refleja que el mercado deja de estar bien conectado.
+          \end{itemize}
+      \end{itemize}
+  \end{columns}
+\end{frame}
+
+%--------------------------------------------------
+\begin{frame}{Espacio de fases: precio vs volatilidad}
+  \begin{columns}
+    \column{0.55\textwidth}
+      \includegraphics[width=\linewidth]{phase space analysis.png}
+    \column{0.45\textwidth}
+      \begin{itemize}
+        \item Cada punto es un día: precio en el eje X, volatilidad en Y.
+        \item Inicio: alrededor de (100, 20\%).
+        \item Shock: salto brusco a menor precio y mayor volatilidad.
+        \item Después del shock:
+          \begin{itemize}
+            \item El sistema ya no vuelve a la región de baja volatilidad.
+            \item Se queda en un “nuevo régimen” más inestable.
+          \end{itemize}
+      \end{itemize}
+  \end{columns}
+\end{frame}
+
+%--------------------------------------------------
+\begin{frame}{Cascadas de liquidación y estrés}
+  \begin{columns}
+    \column{0.6\textwidth}
+      \includegraphics[width=\linewidth]{liquidation cascades.png}
+    \column{0.4\textwidth}
+      \textbf{Arriba: liquidaciones acumuladas}
+      \begin{itemize}
+        \item Curva plana antes del shock.
+        \item Saltos en escalones después del shock.
+        \item Cada escalón = nueva ola de \emph{margin calls}.
+      \end{itemize}
+      \vspace{0.3cm}
+      \textbf{Abajo: estrés promedio}
+      \begin{itemize}
+        \item Apalancados: estrés cerca de 1 (casi todos al límite).
+        \item Hedgers: aumentan su estrés al subir cobertura.
+        \item MM y especuladores: estrés bajo en promedio.
+      \end{itemize}
+  \end{columns}
+\end{frame}
+
+%--------------------------------------------------
+\begin{frame}{Distribuciones de salud y capital}
+  \begin{columns}
+    \column{0.6\textwidth}
+      \includegraphics[width=\linewidth]{statistical distributions.png}
+    \column{0.4\textwidth}
+      \textbf{Salud de los agentes}
+      \begin{itemize}
+        \item Mayoría cerca de 1 (capital casi intacto).
+        \item Cola izquierda: algunos agentes muy dañados.
+        \item Los liquidados se acumulan en la parte más baja.
+      \end{itemize}
+      \vspace{0.3cm}
+      \textbf{Capital por tipo}
+      \begin{itemize}
+        \item Hedgers: los más grandes.
+        \item Market makers: intermedios.
+        \item Especuladores: pequeños.
+        \item Apalancados: capital promedio bajo y golpeado por la crisis.
+      \end{itemize}
+  \end{columns}
+\end{frame}
+
+%--------------------------------------------------
+\begin{frame}{Volatilidad a lo largo del tiempo}
+  \begin{columns}
+    \column{0.6\textwidth}
+      \includegraphics[width=\linewidth]{spectral analysis.png}
+    \column{0.4\textwidth}
+      \textbf{Serie temporal}
+      \begin{itemize}
+        \item Antes del shock: volatilidad estable cerca del 20\%.
+        \item Después: sube y se mantiene en una banda más alta.
+      \end{itemize}
+      \vspace{0.3cm}
+      \textbf{En frecuencia (FFT)}
+      \begin{itemize}
+        \item La mayor parte de la energía está en frecuencias bajas.
+        \item La volatilidad responde más a movimientos de “medio plazo” que a ruido muy rápido.
+      \end{itemize}
+  \end{columns}
+\end{frame}
+
+%--------------------------------------------------
+\begin{frame}{Índice de contagio y fragilidad}
+  \begin{columns}
+    \column{0.6\textwidth}
+      \includegraphics[width=\linewidth]{contagion n systimic risk.png}
+    \column{0.4\textwidth}
+      \textbf{Índice de contagio}
+      \begin{itemize}
+        \item Mide qué proporción de agentes está seriamente dañada.
+        \item En este ejemplo, el contagio fuerte se concentra en apalancados.
+      \end{itemize}
+      \vspace{0.3cm}
+      \textbf{Fragilidad de red}
+      \begin{itemize}
+        \item Captura cuán distintos son los niveles de estrés.
+        \item Picos grandes: coexisten agentes casi intactos con otros muy dañados.
+      \end{itemize}
+  \end{columns}
+\end{frame}
+
+%=================================================================
+\section{Limitaciones, extensiones y conclusiones}
+%=================================================================
+
+%--------------------------------------------------
+\begin{frame}{Limitaciones principales}
+  \begin{itemize}
+    \item Libro de órdenes agregado:
+      \begin{itemize}
+        \item No modelamos cada nivel de precio ni cada orden límite.
+      \end{itemize}
+    \item Reglas de comportamiento sencillas:
+      \begin{itemize}
+        \item No hay algoritmos de alta frecuencia ni estrategias demasiado sofisticadas.
+      \end{itemize}
+    \item Un solo subyacente y una sola opción:
+      \begin{itemize}
+        \item No hay contagio entre activos o clases de instrumentos.
+      \end{itemize}
+    \item Parámetros estilizados:
+      \begin{itemize}
+        \item No está calibrado contra datos reales de posiciones.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+%--------------------------------------------------
+\begin{frame}{Extensiones futuras}
+  \begin{itemize}
+    \item \textbf{Microestructura más rica}
+      \begin{itemize}
+        \item Libro de órdenes explícito.
+        \item Impacto de mercado según tamaño de la orden.
+      \end{itemize}
+    \item \textbf{Red de crédito y cámara de compensación}
+      \begin{itemize}
+        \item Exposiciones entre instituciones.
+        \item Márgenes dinámicos según volatilidad y concentración.
+      \end{itemize}
+    \item \textbf{Aprendizaje y adaptación}
+      \begin{itemize}
+        \item Agentes que modifican sus reglas si pierden dinero.
+      \end{itemize}
+    \item \textbf{Calibración empírica}
+      \begin{itemize}
+        \item Ajustar parámetros para imitar episodios históricos (2008, 2020, etc.).
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+%--------------------------------------------------
+\begin{frame}{Conclusiones}
+  \begin{itemize}
+    \item Un shock moderado puede volverse una crisis de liquidez si:
+      \begin{itemize}
+        \item Hay mucho apalancamiento.
+        \item Las reglas de margen son laxas.
+      \end{itemize}
+    \item Los traders apalancados son el principal canal de amplificación:
+      \begin{itemize}
+        \item \emph{Margin calls} y liquidaciones en cadena.
+        \item Aumentos de volatilidad y fragmentación de la red.
+      \end{itemize}
+    \item Los ABM ayudan a pensar en diseño de políticas:
+      \begin{itemize}
+        \item Límites de apalancamiento.
+        \item Esquemas de margen más prudentes.
+        \item Métricas de riesgo sistémico basadas en redes y estrés.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+
+%=================================================================
+\end{document}
+%=================================================================

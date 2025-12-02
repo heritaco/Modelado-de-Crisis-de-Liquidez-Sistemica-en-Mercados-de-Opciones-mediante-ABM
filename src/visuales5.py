@@ -14,6 +14,10 @@ from scipy.stats import gaussian_kde
 import threading
 import time
 
+# set the route to import scripts to the parent directory
+import style
+style.set_style()
+
 
 
 # Importar el modelo
