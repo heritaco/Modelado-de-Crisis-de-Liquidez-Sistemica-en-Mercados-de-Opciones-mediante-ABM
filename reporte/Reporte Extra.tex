@@ -176,7 +176,7 @@
   \fancyhead[R]{\small\thepage}%
   \renewcommand{\headrulewidth}{0pt}%
 }
-  
+
 
 
 % Subsection title format
@@ -200,6 +200,12 @@
 }
 \renewcommand{\cftaftertoctitle}{\par\vspace{1.5em}} % space below the title
 
+% --- Make the "List of Figures" title huge and nicely styled ---
+\renewcommand{\cftloftitlefont}{%
+  \centering
+  \garamondbold\huge
+}
+\renewcommand{\cftafterloftitle}{\par\vspace{1.5em}} % space below the title
 
 
 
@@ -261,7 +267,7 @@
     {\Huge\extrabold \DocTitle\par}
     \centering
     \vspace{3cm}
-    
+
 
 
     {\Large Universidad de las Américas Puebla
@@ -285,7 +291,7 @@
 
 % =============================
 %   Portada
-% ============================= 
+% =============================
 % Argumento: resumen breve del trabajo
 \MakeCoverPage{%
     Este trabajo presenta un modelo basado en agentes (ABM) para simular y analizar crisis de liquidez sistémica en mercados de opciones. Se describen los tipos de agentes, sus comportamientos e interacciones, así como los parámetros clave del modelo. Las simulaciones generan dinámicas emergentes como cascadas de liquidación, amplificación de volatilidad y fragmentación de la red de intermediarios durante episodios de estrés. Finalmente, se discuten las limitaciones del modelo y se proponen extensiones para aumentar su realismo y su utilidad en estudios de estabilidad financiera.
@@ -295,13 +301,22 @@
 %   Tabla de contenidos
 % =============================
 
-\vspace*{-60pt} 
+\vspace*{-60pt}
 \tableofcontents
 %set counter in roman numerals
 
 \pagenumbering{roman}
 \thispagestyle{firstpagee} % No header/footer on TOC page
 %number page 1
+
+% Table of contents of figures
+\newpage
+
+
+\vspace*{-60pt}
+\listoffigures
+\thispagestyle{firstpagee} % No header/footer on LOF page
+\newpage
 
 %make this sections be counted in roman numerals as I Resumen
 \section*{Resumen}
@@ -320,7 +335,7 @@ Los mercados de derivados, y en particular los mercados de opciones, ocupan un p
 
 En estas situaciones, las pérdidas de unos participantes afectan las restricciones de otros mediante apalancamiento, requerimientos de margen y vínculos de balance. Se generan así \emph{espirales de liquidez}: caídas de precio reducen el valor de colateral, lo que dispara \emph{margin calls} y liquidaciones, las cuales presionan aún más los precios y retroalimentan el proceso. Este tipo de dinámica es difícil de capturar con modelos analíticos tradicionales basados en agentes representativos, equilibrio estático o hipótesis de mercados perfectamente líquidos.
 
-Los Modelos Basados en Agentes (ABM) ofrecen una alternativa natural para estudiar este tipo de fenómenos. En lugar de describir el sistema mediante condiciones de equilibrio agregadas, un ABM especifica reglas de decisión y balance para múltiples tipos de agentes que interactúan de forma explícita. La dinámica agregada ---precios, volúmenes, medidas de riesgo--- emerge de la simulación de estas interacciones \emph{bottom-up}. 
+Los Modelos Basados en Agentes (ABM) ofrecen una alternativa natural para estudiar este tipo de fenómenos. En lugar de describir el sistema mediante condiciones de equilibrio agregadas, un ABM especifica reglas de decisión y balance para múltiples tipos de agentes que interactúan de forma explícita. La dinámica agregada ---precios, volúmenes, medidas de riesgo--- emerge de la simulación de estas interacciones \emph{bottom-up}.
 
 Por lo que en este trabajo se construye un ABM estilizado de un mercado de opciones call at-the-money sobre un único activo subyacente. El modelo incluye cuatro tipos de agentes: \textit{market makers} que proveen liquidez y gestionan inventarios; especuladores que siguen reglas técnicas de \emph{momentum} o reversión a la media; \textit{hedgers} institucionales que ajustan sus posiciones para cubrir portafolios de acciones; y traders apalancados sujetos a restricciones de margen. El precio del subyacente sigue un Movimiento Browniano Geométrico con la posibilidad de incorporar un shock discreto de precio, y las opciones se valoran mediante la fórmula de Black--Scholes.
 
@@ -334,27 +349,6 @@ Las aportaciones principales del trabajo pueden resumirse en tres puntos:
 \end{itemize}
 
 El resto del documento se organiza de la siguiente forma. En la Sección~2 se describe en detalle el diseño del modelo: tipos de agentes, dinámicas de precios, reglas de decisión y parámetros de simulación. La Sección~3 presenta los resultados de un escenario ilustrativo y discute su interpretación económica. La Sección~4 analiza las principales limitaciones del modelo y la Sección~5 propone extensiones futuras. Finalmente, la Sección~6 resume las conclusiones e implicaciones para la gestión de riesgos y el diseño de políticas.
-
-
-
-Las crisis financieras modernas se caracterizan por su rápida propagación a través de redes de instituciones fuertemente interconectadas, generando efectos en cascada que son difíciles de capturar mediante modelos analíticos tradicionales basados en equilibrio. El mercado de opciones, donde interactúan participantes con horizontes, restricciones y objetivos muy distintos, constituye un entorno particularmente propenso a episodios de iliquidez sistémica.
-
-En estos mercados coexisten \textit{market makers}, especuladores, \textit{hedgers} institucionales y traders apalancados, entre otros. Bajo condiciones de estrés, sus decisiones interdependientes pueden amplificar choques iniciales mediante mecanismos de retroalimentación como \textit{margin calls} en cadena, ampliación de \textit{spreads} bid-ask, retiro súbito de liquidez y rebalanceos de cobertura más frecuentes e intensivos.
-
-La modelación mediante Modelos Basados en Agentes (ABM) resulta especialmente adecuada para estudiar estos fenómenos por al menos tres motivos:
-\begin{enumerate}
-    \item Permite incorporar heterogeneidad en las reglas de decisión, restricciones y horizontes de los participantes del mercado.
-    \item Facilita el estudio de dinámicas de contagio y efectos de red sin imponer supuestos de equilibrio, precios de no–arbitraje o racionalidad representativa.
-    \item Hace posible analizar fenómenos emergentes a nivel sistémico que no se deducen de forma inmediata de las reglas individuales (\textit{bottom-up}).
-\end{enumerate}
-
-El objetivo de este trabajo es construir un ABM estilizado de un mercado de opciones call at-the-money y mostrar cómo, a partir de reglas locales sencillas, pueden reproducirse patrones macroscópicos de crisis de liquidez. En particular, se estudia el impacto de choques de precio, niveles de apalancamiento y número de \textit{market makers} sobre:
-\begin{itemize}
-    \item La incidencia de cascadas de liquidación.
-    \item La amplificación de la volatilidad implícita.
-    \item La fragmentación de la red de intermediación.
-\end{itemize}
-
 
 
 
@@ -535,7 +529,7 @@ A partir de todas las cotizaciones se construye un libro de órdenes agregado. E
 y se utiliza para construir un índice de liquidez adimensional
 
 \begin{equation}
-    \text{Liq}_t = 
+    \text{Liq}_t =
     \begin{cases}
         \displaystyle \frac{1}{1 + 100\,\text{Spread}_t}, & \text{si } \text{Spread}_t > 0,\\[4pt]
         1, & \text{si } \text{Spread}_t = 0,
@@ -682,8 +676,8 @@ Estas cantidades se utilizan tanto en los histogramas de salud y capital como en
 Sea $\mathcal{S}_t$ el conjunto de estados de todos los agentes en el tiempo $t$, cada uno con atributos \texttt{health}, \texttt{stress} y \texttt{liquidated}. El \textbf{índice de contagio sistémico} se define como
 
 \begin{equation}
-    I_t = \frac{1}{|\mathcal{S}_t|} 
-    \sum_{s \in \mathcal{S}_t} 
+    I_t = \frac{1}{|\mathcal{S}_t|}
+    \sum_{s \in \mathcal{S}_t}
     \mathbf{1}\big\{ s.\text{health} < 0.7 \ \text{y no liquidado} \big\},
 \end{equation}
 
@@ -694,7 +688,7 @@ La \textbf{fragilidad de red} se aproxima mediante la desviación estándar de l
 \begin{equation}
     F_t =
     \begin{cases}
-        \sqrt{\frac{1}{n_t-1}\sum_{s \in \mathcal{S}_t^{\text{act}}} 
+        \sqrt{\frac{1}{n_t-1}\sum_{s \in \mathcal{S}_t^{\text{act}}}
         \big(s.\text{stress} - \overline{\text{stress}}_t\big)^2}, & n_t > 1,\\[6pt]
         0, & n_t \le 1,
     \end{cases}
@@ -708,7 +702,7 @@ $\overline{\text{stress}}_t$ es su promedio. Valores elevados de $I_t$ y $F_t$ i
 Finalmente, para estudiar la topología de la red en cada instante $t$, se construye un grafo no dirigido $G_t$ cuyos nodos son los agentes individuales, y se coloca una arista entre dos agentes $i$ y $j$ si la diferencia absoluta en sus niveles de estrés es pequeña:
 
 \begin{equation}
-    A_{ij,t} = 
+    A_{ij,t} =
     \begin{cases}
         1, & \text{si } |\text{stress}_{i,t} - \text{stress}_{j,t}| < 0.3,\\
         0, & \text{en otro caso},
@@ -726,7 +720,7 @@ asignando a cada arista un peso $w_{ij,t} = 1 - |\text{stress}_{i,t} - \text{str
 
 \section{Resultados}
 
-En esta sección se analiza un escenario ilustrativo generado con el modelo ABM descrito previamente, implementado en \texttt{Python}/Mesa y con visualizaciones interactivas desarrolladas en Solara.%
+En esta sección se analiza un escenario ilustrativo generado con el modelo ABM descrito previamente, implementado en \texttt{Python}/Mesa y con visualizaciones interactivas desarrolladas en Solara.
 \footnote{Véase el código \texttt{options\_market\_abm.py} para la dinámica del modelo y \texttt{visuales5.py} para la interfaz de visualización.}
 Se trata de una corrida donde el shock negativo al subyacente dispara una crisis de liquidez, múltiples \emph{margin calls} y fragmentación de la red de agentes. El foco está en la interpretación económica y sistémica de las trayectorias, no en los detalles de implementación del código.
 
@@ -745,7 +739,7 @@ En la parte inferior del panel se muestran los parámetros de la corrida: númer
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.45\textwidth]{estado actual.png}
+    \includegraphics[width=0.26\textwidth]{estado actual.png}
     \caption{Panel de estado del modelo en $t=41$. Se muestra el régimen de mercado (CRISIS), el precio del subyacente, la volatilidad implícita y el número acumulado de \emph{margin calls}, junto con los deslizadores de parámetros.}
     \label{fig:status-panel}
 \end{figure}
@@ -772,7 +766,7 @@ En este escenario se observa una estructura claramente fragmentada: dos grandes 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{network.png}
+    \includegraphics[width=0.6\textwidth]{network.png}
     \caption{Topología de la red de agentes en $t=41$. Colores: verde (sano), naranja (estresado), rojo (crítico) y negro (liquidado). La fragmentación en dos clústeres grandes y algunos nodos aislados es indicio de ruptura de la conectividad del mercado.}
     \label{fig:network}
 \end{figure}
@@ -787,7 +781,8 @@ La Figura~\ref{fig:phase-space} muestra la trayectoria del sistema en el espacio
     \item El \textbf{shock} (estrella roja), cuando se aplica la caída abrupta de precio.
 \end{itemize}
 
-La interpretación paso a paso es la siguiente:
+
+La interpretación es la siguiente:
 
 \begin{enumerate}
     \item \textbf{Etapa pre-shock (primeros pasos).} Los puntos iniciales están agrupados alrededor de $S_0 \approx 100$ y $\sigma_{\text{imp}} \approx 20\%$. El movimiento corresponde al GBM con pequeñas fluctuaciones: el precio oscila en una banda estrecha y la volatilidad se mantiene casi constante.
@@ -796,14 +791,8 @@ La interpretación paso a paso es la siguiente:
     \item \textbf{Etapa post-shock tardía.} Conforme el sistema se acerca a $t=41$, el punto actual aparece desplazado hacia la izquierda respecto al origen (precio más bajo) y con una volatilidad mayor que la inicial. En esta fase los agentes que sobrevivieron han absorbido las pérdidas y el mercado entra en un régimen de volatilidad estructuralmente más alta: los agentes son más cautelosos y exigen primas de riesgo mayores.
 \end{enumerate}
 
-En resumen, el espacio de fases deja ver que la crisis no es sólo una caída de precio puntual, sino una transición de régimen: el sistema sale de una región $(S,\sigma)$ de baja volatilidad y pasa a otra región caracterizada por precios deprimidos y volatilidad persistentemente elevada.
+El espacio de fases deja ver que la crisis no es sólo una caída de precio puntual, sino una transición de régimen: el sistema sale de una región $(S,\sigma)$ de baja volatilidad y pasa a otra región caracterizada por precios deprimidos y volatilidad persistentemente elevada.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{phase space analysis.png}
-    \caption{Trayectoria del sistema en el espacio de fases (precio subyacente vs volatilidad implícita). El shock desplaza al sistema bruscamente a una región de menor precio y mayor volatilidad, seguida de oscilaciones en torno a este nuevo régimen.}
-    \label{fig:phase-space}
-\end{figure}
 
 \subsection{Cascadas de liquidación y evolución del estrés}
 
@@ -835,7 +824,7 @@ El mensaje central de la figura es que la crisis es disparada y amplificada prin
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{liquidation cascades.png}
+    \includegraphics[width=0.5\textwidth]{liquidation cascades.png}
     \caption{Dinámica de cascadas de liquidación y evolución del estrés promedio por tipo de agente. Se observan saltos discretos en las liquidaciones acumuladas, característicos de \emph{margin calls} en cadena, y niveles de estrés persistentemente elevados en los traders apalancados.}
     \label{fig:cascades}
 \end{figure}
@@ -890,6 +879,14 @@ En el panel superior se representa $\sigma_{\text{imp},t}$ a lo largo del tiempo
 
 \subsubsection*{Dominio de frecuencias}
 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{spectral analysis.png}
+    \caption{Serie temporal de volatilidad implícita (arriba) y análisis espectral mediante FFT (abajo). La crisis desplaza la serie a un nivel estructuralmente más alto y concentra la energía en frecuencias bajas.}
+    \label{fig:spectral}
+\end{figure}
+
 En el panel inferior se muestra el espectro de potencias (FFT) de la serie de volatilidad (centrada en su media). Las observaciones clave son:
 
 \begin{itemize}
@@ -898,12 +895,6 @@ En el panel inferior se muestra el espectro de potencias (FFT) de la serie de vo
     \item En un escenario con crisis más intermitentes se podrían observar patrones de tipo ``ciclos de estrés''; en este ejemplo concreto, la crisis es más bien monotónica (gran shock seguido de persistencia).
 \end{itemize}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.85\textwidth]{spectral analysis.png}
-    \caption{Serie temporal de volatilidad implícita (arriba) y análisis espectral mediante FFT (abajo). La crisis desplaza la serie a un nivel estructuralmente más alto y concentra la energía en frecuencias bajas.}
-    \label{fig:spectral}
-\end{figure}
 
 \subsection{Métricas de contagio sistémico y fragilidad de red}
 
@@ -961,8 +952,8 @@ El modelo propuesto es deliberadamente estilizado. Esto permite estudiar mecanis
 \subsection{Microestructura y formación de precios}
 
 \begin{enumerate}
-    \item \textbf{Libro de órdenes agregado.} 
-    La formación de precios se basa en un mecanismo de subasta centralizada con un \emph{order book} implícito y agregado. 
+    \item \textbf{Libro de órdenes agregado.}
+    La formación de precios se basa en un mecanismo de subasta centralizada con un \emph{order book} implícito y agregado.
     No se modelan:
     \begin{itemize}
         \item profundidad por niveles de precio,
@@ -971,9 +962,9 @@ El modelo propuesto es deliberadamente estilizado. Esto permite estudiar mecanis
         \item diferencias entre \emph{market orders} y \emph{limit orders}.
     \end{itemize}
     Esto implica que ciertas fuentes de iliquidez microestructural (por ejemplo, huecos en el libro, colas vacías, desalineamientos temporales bid--ask) quedan resumidas en el ensanchamiento de \emph{spreads}, pero no se observan de forma explícita.
-    
+
     \item \textbf{Ausencia de \emph{price impact} endógeno detallado.}
-    Las operaciones afectan al precio principalmente a través de cambios en el inventario de \emph{market makers} y en las métricas agregadas de estrés. 
+    Las operaciones afectan al precio principalmente a través de cambios en el inventario de \emph{market makers} y en las métricas agregadas de estrés.
     No se incluye un modelo explícito de impacto de mercado dependiente del tamaño de la orden y de la profundidad local, por lo que se subestima la no linealidad que puede generar una sola orden grande en un libro poco profundo.
 \end{enumerate}
 
@@ -981,7 +972,7 @@ El modelo propuesto es deliberadamente estilizado. Esto permite estudiar mecanis
 
 \begin{enumerate}
     \item \textbf{Estructura financiera simplificada.}
-    Cada agente se caracteriza sólo por capital, posición en opciones y parámetros de comportamiento. 
+    Cada agente se caracteriza sólo por capital, posición en opciones y parámetros de comportamiento.
     No se modelan pasivos diferenciados, fuentes de financiamiento, colateral elegible, ni la interacción entre distintas mesas dentro de una misma institución.
     En particular, no hay:
     \begin{itemize}
@@ -991,7 +982,7 @@ El modelo propuesto es deliberadamente estilizado. Esto permite estudiar mecanis
     \end{itemize}
 
     \item \textbf{Márgenes estáticos y homogéneos.}
-    El requerimiento de margen $m$ se toma fijo por agente, y el \emph{margin call} se dispara con una regla determinista simple. 
+    El requerimiento de margen $m$ se toma fijo por agente, y el \emph{margin call} se dispara con una regla determinista simple.
     En la realidad, las casas de compensación ajustan márgenes de forma dinámica en función de volatilidad, correlaciones y concentración de posiciones.
     El modelo, por tanto, capta bien la lógica cualitativa de las cascadas de margen, pero no reproduce la complejidad de esquemas de gestión de riesgo como SPAN o modelos de VaR interno.
 
@@ -1004,7 +995,7 @@ El modelo propuesto es deliberadamente estilizado. Esto permite estudiar mecanis
 \begin{enumerate}
     \item \textbf{Red basada en similitud de estrés, no en exposición financiera.}
     La red que visualizamos en la Figura~\ref{fig:network} se construye a partir de la similitud en niveles de estrés entre agentes (nodos conectados si sus valores de estrés son cercanos), no a partir de exposiciones directas (matriz de créditos y deudas).
-    
+
     En términos formales, utilizamos una matriz de adyacencia $A_{ij}(t)$ definida por
     \[
         A_{ij}(t) = \mathbf{1}\{|\text{estrés}_{i,t} - \text{estrés}_{j,t}| < \varepsilon\},
@@ -1019,7 +1010,7 @@ El modelo propuesto es deliberadamente estilizado. Esto permite estudiar mecanis
     \item \textbf{Parámetros estilizados.}
     Los intervalos de capital inicial, \emph{spreads}, niveles de apalancamiento, etc., son plausibles desde el punto de vista financiero, pero no han sido calibrados contra bases de datos reales de posiciones en opciones.
     Por tanto, los niveles numéricos (porcentaje de agentes liquidados, magnitud exacta de saltos de volatilidad) deben interpretarse como ilustrativos, no como pronósticos cuantitativos.
-    
+
     \item \textbf{Ausencia de validación empírica sistemática.}
     Aunque el modelo reproduce patrones cualitativos razonables (cascadas, aumentos de volatilidad, fragmentación de red), todavía no se ha realizado una comparación formal contra episodios históricos (por ejemplo, superficie de volatilidad en la crisis de 2008 o de 2020, datos de márgenes intradía, etc.).
 \end{enumerate}
@@ -1099,7 +1090,7 @@ Las siguientes extensiones están orientadas a cerrar, al menos parcialmente, la
 
 \begin{enumerate}
     \item \textbf{Calibración de superficie de volatilidad.}
-    Ajustar el modelo para que reproduzca características de superficies de volatilidad observadas (por ejemplo, sonrisa, skew, term structure) en mercados reales de opciones. 
+    Ajustar el modelo para que reproduzca características de superficies de volatilidad observadas (por ejemplo, sonrisa, skew, term structure) en mercados reales de opciones.
     Esto podría hacerse mediante procedimientos de calibración indirecta: minimizar la distancia entre ciertos momentos empíricos y los producidos por el modelo.
 
     \item \textbf{Contraste con episodios históricos.}
@@ -1116,11 +1107,11 @@ Las siguientes extensiones están orientadas a cerrar, al menos parcialmente, la
 
 \begin{enumerate}
     \item \textbf{Varios subyacentes y clases de derivados.}
-    Incorporar múltiples subyacentes $(S^1_t,\dots,S^M_t)$ con correlaciones, así como otros derivados (puts, opciones exóticas, futuros). 
+    Incorporar múltiples subyacentes $(S^1_t,\dots,S^M_t)$ con correlaciones, así como otros derivados (puts, opciones exóticas, futuros).
     El objetivo sería estudiar cómo un shock localizado en un activo puede propagarse hacia otros vía portafolios compartidos y estrategias de cobertura cruzada.
 
     \item \textbf{Acoplamiento con un entorno macro.}
-    Vincular el proceso del subyacente a variables macro (tasas, spreads de crédito, índices de volatilidad global) modeladas estocásticamente. 
+    Vincular el proceso del subyacente a variables macro (tasas, spreads de crédito, índices de volatilidad global) modeladas estocásticamente.
     Esto permitiría representar escenarios en los que la crisis en opciones es parte de un ciclo macro-financiero más amplio.
 \end{enumerate}
 
@@ -1145,13 +1136,13 @@ El modelo basado en agentes desarrollado en este trabajo constituye un primer pa
 
     \item \textbf{Fragmentación de la red y concentración del daño.}
     Las figuras de topología de red muestran que, en el régimen de crisis, la conectividad entre agentes se rompe en clústeres: un grupo muy estresado y otro relativamente sano.
-    La distribución de salud y capital confirma que las pérdidas más severas se concentran en un subconjunto (principalmente traders apalancados), mientras que hedgers y market makers sobreviven con capital elevado. 
+    La distribución de salud y capital confirma que las pérdidas más severas se concentran en un subconjunto (principalmente traders apalancados), mientras que hedgers y market makers sobreviven con capital elevado.
     Esto ilustra cómo un mismo choque produce impactos muy heterogéneos según el modelo de negocio y la estructura de balance.
 
     \item \textbf{Métricas agregadas de contagio y fragilidad.}
     El índice de contagio sistémico $I_t$ y la fragilidad de red $F_t$ proporcionan resúmenes numéricos útiles de la dinámica global:
     \begin{itemize}
-        \item $I_t$ captura la fracción de agentes en zona de estrés; 
+        \item $I_t$ captura la fracción de agentes en zona de estrés;
         \item $F_t$ refleja la dispersión de ese estrés.
     \end{itemize}
     En corridas con shocks más intensos, estos indicadores presentan picos que coinciden con las fases de mayor actividad de marginación y liquidaciones, lo que sugiere su posible uso como alertas tempranas.
