@@ -793,6 +793,12 @@ La interpretación es la siguiente:
 
 El espacio de fases deja ver que la crisis no es sólo una caída de precio puntual, sino una transición de régimen: el sistema sale de una región $(S,\sigma)$ de baja volatilidad y pasa a otra región caracterizada por precios deprimidos y volatilidad persistentemente elevada.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{phase space analysis.png}
+    \caption{Trayectoria en el espacio de fases $(S_t, \sigma_{\text{imp},t})$. El sistema parte de un estado de baja volatilidad y precio estable, sufre un shock que desplaza ambos valores, y evoluciona hacia un régimen de precios bajos y alta volatilidad.}
+    \label{fig:phase-space}
+\end{figure}
 
 \subsection{Cascadas de liquidación y evolución del estrés}
 
@@ -824,7 +830,7 @@ El mensaje central de la figura es que la crisis es disparada y amplificada prin
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\textwidth]{liquidation cascades.png}
+    \includegraphics[width=0.75\textwidth]{liquidation cascades.png}
     \caption{Dinámica de cascadas de liquidación y evolución del estrés promedio por tipo de agente. Se observan saltos discretos en las liquidaciones acumuladas, característicos de \emph{margin calls} en cadena, y niveles de estrés persistentemente elevados en los traders apalancados.}
     \label{fig:cascades}
 \end{figure}
